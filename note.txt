@@ -1,0 +1,106 @@
+----binarytree.c
+       - the body of function InsertBST has:
+            if( a function returns bool) then  malloc else return (skip)
+            type: malloc + 0
+       - the body of function  Delete has:
+            if (not null pointer)  then free
+               elseif (not null pointer) then free
+               else free
+               type : free + (free + free)
+       - the body of function DeleteBST has:
+         if (null pointer) then return else {
+            if (key == key2) then Delete
+                 elseif (key < key2) then DeleteBST(left)
+                  else DeleteBST(right) }
+                  type : 0 + (Delete type + recursive type + recursive type)
+
+      - main: (0 + malloc)[10]; \mu\alpha.(0+( (free +( free +free)) +\alpha+\alpha))
+              or   \mu\alpha.((Inserttype; \alpha) + 0); \mu\alpha.(0+( (free +( free +free)) +\alpha+\alpha))
+
+     Note : this program is safe: malloc 10 times, free 10 times,
+     but it could not be safe by behavioral type like main above, because the main type may be abstracted as malloc 10 times ;  free 0 times
+
+----linklist.c
+        - the function InitList returns int : malloc
+        - the function ListEmpty returns bool: 0
+        - function ClearList returns bool : while(p is not null pointer) {free}
+          type : \mu\alpha. (0 + (free;\alpha))
+        - function ListLength returns length : 0
+        - GetElem returns bool: 0
+        - LocateElem : 0
+        - ListInsert : malloc
+        - ListDelete: free
+        - ListTraverse returns boolean: 0
+        - CreateListHead : malloc; for (i < n) { malloc }  -- malloc; \mu\alpha.((malloc;\alpha) + 0);
+        - CreateListTail : malloc; for (i < n) {malloc} -- malloc; \mu\alpha.((malloc;\alpha) + 0);
+        - main : malloc; 0; for(5 times) {malloc}; 0 ; 0; (\mu\alpha.(0 + (free;\alpha)))
+         or malloc; 0; \mu\alpha.((malloc;\alpha) + 0);; 0 ; 0; (\mu\alpha.(0 + (free;\alpha)))
+
+        Note : thie program is safe, malloc 6 times, free 6 times. By using our idea the behavioral type is abstracted as above, it may behave like malloc 6 times, free 0 times.
+
+-----linklist2.c
+        - the function InitList returns int : malloc
+        - the function ListEmpty returns bool: 0
+        - function ClearList returns bool : while(p is not null pointer) {free}
+          type : \mu\alpha. (0 + (free;\alpha))
+        - function ListLength returns length : 0
+        - GetElem returns bool: 0
+        - LocateElem : 0
+        - ListInsert : malloc
+        - ListDelete: free
+        - ListTraverse returns boolean: 0
+        - CreateListHead : malloc; for (i < n) { malloc } --malloc; \mu\alpha.((malloc;\alpha) + 0);
+        - CreateListTail : malloc; for (i < n) {malloc}
+        - main : malloc; \mu\alpha.(malloc + \alpha); \mu\alpha. (0 + (free;\alpha))
+
+        Note : thie program is safe, malloc 21 times, free 21 times. By using our idea the behavioral type is abstracted as above, it may behave like malloc infinite times, free 0 times.
+
+
+------linkqueue.c
+        - visit returns int: 0
+        - InitQueue returns int: malloc
+        - DestroyQueue returns int : while (not null pointer) {free} --  \mu\alpha. (0 + (free;\alpha))
+        - ClearQueue returns int : whle .. --  \mu\alpha. (0 + (free;\alpha))
+        - QueueEmpty returns boolean: 0
+        - QueueLength : 0
+        - GetHead : 0
+        - EnQueue returns int : malloc
+        - DeQueue returns int : free
+        - QueueTraverse : 0
+        - main : malloc;malloc;malloc;malloc;free; \mu\alpha.(0 + (free;\alpha));  \mu\alpha. (0 + (free;\alpha))
+
+        Note: this program is safe, malloc 4 times, free 4 times. But it is not safe by using our idea.
+
+--------linkstack.c
+        - visit returns int: 0
+        - InitStack returns int: malloc
+        - DestroyQueue returns int : while (not null pointer) {free} --  \mu\alpha. (0 + (free;\alpha))
+        - ClearStack returns int : whle .. --  \mu\alpha. (0 + (free;\alpha))
+        - StackEmpty returns boolean: 0
+        - StackLength : 0
+        - GetTop : 0
+        - Push returns int : malloc
+        - Pop returns int : free
+        - StackTraverse : 0
+        - main : if (malloc is ok) then push else skip
+          main function type:  malloc; (\mu\alpha.(0 + (malloc;\alpha)) + 0); free; \mu\alpha.( 0 + (free;\alpha))
+
+        Note: this program is safe, malloc 11 times, free 11 times. But it is not safe by using our idea.
+
+
+---------database.c
+        - die : 0
+        - Address_print : 0
+        - Database_load : 0
+        - fread : 0
+        - fopen : malloc
+        - fclose : free
+        - Database_open : malloc;malloc; if (==) then fopen else {fopen; if(null pointer) then 0}
+        - Database_close : if (not null) then {if (not null) fclose; if (not null) then free; free;}
+        - Database_write : 0
+        - Database_create : 0
+        - Database_set : 0
+        - Database_get :  0
+        - Database_delete : 0
+        - Database_list : 0
+        - main : malloc;malloc;
