@@ -96,11 +96,90 @@
         - fopen : malloc
         - fclose : free
         - Database_open : malloc;malloc; if (==) then fopen else {fopen; if(null pointer) then 0}
+          type : malloc; malloc; (fmalloc + ( fmalloc; ( 0 + 0)))
         - Database_close : if (not null) then {if (not null) fclose; if (not null) then free; free;}
+          type :  ((ffree + 0); ( free + 0); free)  + 0
         - Database_write : 0
         - Database_create : 0
         - Database_set : 0
         - Database_get :  0
         - Database_delete : 0
         - Database_list : 0
-        - main : malloc;malloc;
+        - main : malloc;malloc; (fmalloc + ( fmalloc; ( 0 + 0))) ;  ((ffree + 0); ( free + 0); free)  + 0
+
+         this program is safe, malloc 3 times, free 3 times. But the abstracted type may be malloc 3 times, free 0 times.
+
+--------slabinfo.c
+        - get_obj_and_str : if (not null ) strdup
+          type: (malloc) + 0
+        - fatal : 0
+        - usage : 0
+        - read_obj : fopen; if (not null) then 0 else {;fclose;}
+           type : fmalloc; (0 + ffree)
+        - get_obj : if (read_obj)
+        - set_obj : fopen; fclose
+        - read_slab_obj : fopen ; if (not null) then 0 else fclose
+          type : fmalloc; (0 + ffree)
+        - store_size : 0
+        - decode_numa_list : 0
+        - slab_validate : set_obj
+        - slab_shrink: set_obj
+        - first_line : 0
+        - find_one_alias : 0
+        - slab_size : 0
+        - slab_activity :0
+        - slab_numa : 0
+        - show_trackinig : 0
+        - ops : 0
+        - onoff : 0
+        - slab_stats : 0
+        - report : 0
+        - slabcache : 0
+        - debug_ope_scan : 0
+        - slab_empty : 0
+        - slab_debug : ( (fmalloc; ffree)+ 0); ( ( (fmalloc; ffree) + 0  ) + 0);  10 times
+        - totals :  0
+        - sort_slabs : 0
+        - sort_aliases : 0
+        -  link_slabs : 0
+        - alias : 0
+        - rename_slabs : 0
+        - slab_mismatch : 0
+        - read_slab_dir :  while (true) {switch case}
+        - output_slabs: 0
+        - main :
+
+-------ihex2fw.c
+        - nybble : 0
+        - hex : 0
+        - usage : 0
+        - process_ihex : loop1: malloc; (switch case (goto loop) + (0) + 0 + (goto) + (0) + (goto ) + (0) )
+           type : \mu\alpha.(malloc;(\alpha + 0))
+        - file_record :0
+        - output_records : 0
+        - main : if (process_ihex):   --------  \mu\alpha.(malloc;(\alpha + 0))
+        this program is not safe; may consume infinite memory cells
+
+
+------ gen_init_cpio.c
+       - push_string : 0
+       - push_pad :  0;
+       - push_rest : 0
+       - push_hdr : 0
+       - cpio_trailer : 0
+       - cpio_mkslink : 0
+       - cpio_mkslink_line : 0;
+       - cpio_mkgeneric : 0
+       -  cpio_mkgeneric_line : 0
+       - cpio_mkdir_line
+       - cpio_mkpipe_line
+       - cpio_mksock_line
+       -cpio_mknod :
+       - cpio_mknod_line :
+       - cpio_mkfile: fmalloc; if(true){goto label}; if(true){goto label};  malloc; if (not null) {goto label}; if(i < n) {goto label}; for(i<n) {goto label + 0}; label:{if(not null) then free else 0;    if (i < n) then ffree else 0}
+       type :
+       - cpio_replace_env : 0
+       - cpio_mkfile_line: if (i < n) then goto label else 0;   if (true) then (malloc; if(true) goto ; );  cpio_mkfile; label :{if(not null) free else 0}
+       - usage : 0;
+       - file_handler file_handler_table[]
+       - main  : while(is true) {for (not null) {if(not null) then {cpio_mkfile_line} ;  break} }

@@ -7,7 +7,7 @@
 #define MAX_DATA 512
 #define MAX_ROWS 100
 
-int Num = 2;
+int Num = 3;
 
 struct Address {
     int id;
@@ -66,8 +66,14 @@ struct Connection *Database_open(const char *filename, char mode)
 
     if(mode == 'c') {
         conn->file = fopen(filename, "w");
+        /* assert */
+        Num = Num - 1;
+        assert(Num >= 0);
     } else {
         conn->file = fopen(filename, "r+");
+        /* assert */
+        Num = Num - 1;
+        assert(Num >= 0);
 
         if(conn->file) {
             Database_load(conn);
@@ -84,7 +90,11 @@ void Database_close(struct Connection *conn)
     if(conn) {
 
         if(conn->file)
-          fclose(conn->file);
+          {
+            fclose(conn->file);
+            Num = Num + 1;
+          }
+
 
         if(conn->db)
           {
@@ -141,7 +151,7 @@ void Database_get(struct Connection *conn, int id)
 {
     struct Address *addr = &conn->db->rows[id];
 
-    if(addr->set) {
+        if(addr->set) {
         Address_print(addr);
     } else {
         die("ID is not set");

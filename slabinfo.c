@@ -24,6 +24,8 @@
 #define MAX_ALIASES 500
 #define MAX_NODES 1024
 
+int Num = 3;
+
 struct slabinfo {
 	char *name;
 	int alias;
@@ -100,7 +102,6 @@ static void fatal(const char *x, ...)
 	va_end(ap);
 	exit(EXIT_FAILURE);
 }
-
 static void usage(void)
 {
 	printf("slabinfo 4/15/2011. (c) 2007 sgi/(c) 2011 Linux Foundation.\n\n"
@@ -1185,6 +1186,8 @@ static void read_slab_dir(void)
 			slab->partial = get_obj_and_str("partial", &t);
 			decode_numa_list(slab->numa_partial, t);
 			free(t);
+                        Num = Num - 1;
+                        
 			slab->poison = get_obj("poison");
 			slab->reclaim_account = get_obj("reclaim_account");
 			slab->red_zone = get_obj("red_zone");
@@ -1193,6 +1196,8 @@ static void read_slab_dir(void)
 			slab->slabs = get_obj_and_str("slabs", &t);
 			decode_numa_list(slab->numa, t);
 			free(t);
+                        Num = Num -1;
+                        
 			slab->store_user = get_obj("store_user");
 			slab->trace = get_obj("trace");
 			slab->alloc_fastpath = get_obj("alloc_fastpath");

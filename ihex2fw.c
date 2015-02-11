@@ -22,7 +22,9 @@
 #include <stdlib.h>
 #define _GNU_SOURCE
 #include <getopt.h>
+#include <assert.h>
 
+int Num = 10;
 
 struct ihex_binrec {
 	struct ihex_binrec *next; /* not part of the real data structure */
@@ -157,6 +159,10 @@ next_record:
 		len += hex(data + i, &crc); i += 2;
 	}
 	record = malloc((sizeof (*record) + len + 3) & ~3);
+        /* assert  */
+        Num = Num - 1 ;
+        assert (Num >= 1);
+        
 	if (!record) {
 		fprintf(stderr, "out of memory for records\n");
 		return -ENOMEM;
@@ -244,7 +250,6 @@ next_record:
 
 	return 0;
 }
-
 static struct ihex_binrec *records;
 
 static void file_record(struct ihex_binrec *record)
